@@ -22,12 +22,13 @@ class Cohort < ApplicationRecord
     end
 
     # Collect order stats.
-    cohorts.keys.sort.reverse.each do |k|
-      # 2 hashes to save per week orderes in them for later use so we don't have to
-      # run the same database queries over and over again.
-      all_oderers = {}
-      first_time_orderes = {}
 
+    # 2 hashes to save per week orderes in them for later use so we don't have to
+    # run the same database queries over and over again.
+    all_oderers = {}
+    first_time_orderes = {}
+
+    cohorts.keys.sort.reverse.each do |k|
       k.step(latest_time, WEEK_IN_SEC) do |week_end|
         week_start = week_end - WEEK_IN_SEC
 
