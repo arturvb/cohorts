@@ -23,13 +23,22 @@ class Cohort < ApplicationRecord
 
     # Collect order stats.
     cohorts.keys.sort.reverse.each do |k|
+      # 2 hashes to save per week orderes in them for later use so we don't have to
+      # run the same database queries over and over again.
+      all_oderers = {}
+      first_time_orderes = {}
+
       k.step(latest_time, WEEK_IN_SEC) do |week_end|
         week_start = week_end - WEEK_IN_SEC
 
-        orders = Order.where(user_id: cohorts[k][0],
-                             created_at: Time.at(week_start)..Time.at(week_end))
-        cohorts[k][1] << WeekStats.new(orders.distinct.count(:user_id),
-                                       orders.where(order_num: 1).count)
+        all_oderers[week_end] ||= Order.where(
+          created_at: Time.at(week_start)..Time.at(week_end)).pluck(:user_id)
+
+        first_time_orderes[week_end] ||= Order.where(
+          order_num: 1, created_at: Time.at(week_start)..Time.at(week_end)).pluck(:user_id)
+
+        cohorts[k][1] << WeekStats.new((cohorts[k][0] & all_oderers[week_end]).size,
+                                       (cohorts[k][0] & first_time_orderes[week_end]).size)
       end
     end
 
