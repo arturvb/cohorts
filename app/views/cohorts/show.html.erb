@@ -1,0 +1,29 @@
+<table border="1">
+  <thead>
+    <tr>
+      <th>Cohort</th>
+      <th>Users</th>
+      <% @cohorts.size.times do |i| %>
+      <th><%= "#{i*7}-#{i*7+7} days" %></th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @cohorts.keys.sort.reverse.each do |k| %>
+    <tr>
+      <% end_time = Time.at(k).in_time_zone('Pacific Time (US & Canada)') %>
+      <% start_time = end_time - 7.days %>
+      <td><%= "#{start_time.strftime('%-m/%-d')}-#{end_time.strftime('%-m/%-d')}" %></td>
+      <td><%= "#{@cohorts[k][0]} users" %></td>
+      <% @cohorts[k][1].each do |w| %>
+      <% total = (w.total_week_orderers.to_f * 100 / @cohorts[k][0]).round %>
+      <% first_time = w.first_time_week_orderers.to_f * 100 / @cohorts[k][0] %>
+      <% first_time = first_time < 2 ? first_time.round(1) : first_time.round %>
+         <td><%= "#{total}% orderers (#{w.total_week_orderers})" %>
+           <br><%= "#{first_time}% 1st time (#{w.first_time_week_orderers})" %></td>
+         <% end %>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
