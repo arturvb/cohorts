@@ -23,7 +23,7 @@ class Cohort < ApplicationRecord
 
     # Collect order stats.
 
-    # 2 hashes to save per week orderes in them for later use so we don't have to
+    # 2 hashes to save per week orderers in them for later use so we don't have to
     # run the same database queries over and over again.
     all_oderers = {}
     first_time_orderes = {}
